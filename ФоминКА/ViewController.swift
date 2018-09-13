@@ -28,13 +28,19 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.companyPickerView.delegate = self
         self.activityIndicator.hidesWhenStopped = true
         self.activityIndicator.startAnimating()
-        ApiService.shared.getCompanyNames(){
-            responce in
-            self.UpdatePickerValues(json: responce)
-            self.companyPickerView.reloadAllComponents()
-            self.requestQuoteUpdate()
-            self.activityIndicator.stopAnimating()
-        }
+        
+        
+        do {
+            ApiService.shared.getCompanyNames(){
+                responce in
+                self.UpdatePickerValues(json: responce)
+                self.companyPickerView.reloadAllComponents()
+                self.requestQuoteUpdate()
+                self.activityIndicator.stopAnimating()
+            } }
+            catch {
+                showAlert(message: "Network Error.")
+                }
     }
 
     override func didReceiveMemoryWarning() {
@@ -44,10 +50,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     private func UpdatePickerValues(json: [[String:Any]]){
         companies = [String:String]()
         for company in json{
-            var companyName = company["companyName"]! as! String
-            var companySymbol = company["symbol"]! as! String
+            let companyName = company["companyName"]! as! String
+            let companySymbol = company["symbol"]! as! String
             companies[companyName] = companySymbol
         }
+    }
+    
+    private func showAlert(message: String){
+        let alert = UIAlertController(title: "Error.", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     private func requestQuote(for symbol: String){
@@ -59,6 +71,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 (response as? HTTPURLResponse)?.statusCode == 200,
             let data = data
                 else {
+                    self.showAlert(message: "Network Error.")
                     print("NetworkError!")
                     return
             }
@@ -78,14 +91,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 let openPrice = json["open"] as? Double,
                 let priceChange = json["change"] as? Double
             else {
-                    print("Invalid json")
-                    return
+                showAlert(message: "Network Error.")
+                print("Invalid json")
+                return
                 }
             DispatchQueue.main.async {
                 self.displayStockInfo(companyName: companyName, symbol: symbol, price: price, priceChange: priceChange, openPrice: openPrice)
             }
             
         } catch {
+                showAlert(message: "Network Error.")
                 print("Json Parsing Error.")
             }
     }
@@ -110,11 +125,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         self.priceChangeLabel.text = "\(priceChange)"
         
-        ApiService.shared.getUrlOfLogo(for: symbol){
-            url in
-            self.companyLogoUIImageView.imageFromServerURL(urlString: url)
-            print(url)
+        do {
+            ApiService.shared.getUrlOfLogo(for: symbol){
+                url in
+                self.companyLogoUIImageView.imageFromServerURL(urlString: url)
+                print(url)
+            }
+        } catch {
+            showAlert(message: "Network Error.")
         }
+
     }
     
     private func requestQuoteUpdate() {
