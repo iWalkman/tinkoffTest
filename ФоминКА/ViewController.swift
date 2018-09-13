@@ -18,21 +18,35 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     @IBOutlet var companyPickerView: UIPickerView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
-    private let companies: [String:String] = ["Apple":"AAPL", "Misrosoft": "MSFT", "Alphabet": "googl"]
+    private var companies = [String:String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.companyNameLabel.text = "H";
+
         self.companyPickerView.dataSource = self as UIPickerViewDataSource
         self.companyPickerView.delegate = self
         self.activityIndicator.hidesWhenStopped = true
-        
-        self.requestQuoteUpdate()
+        self.activityIndicator.startAnimating()
+        ApiService.shared.getCompanyNames(){
+            responce in
+            self.UpdatePickerValues(json: responce)
+            self.companyPickerView.reloadAllComponents()
+            self.requestQuoteUpdate()
+            self.activityIndicator.stopAnimating()
+        }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    }
+    
+    private func UpdatePickerValues(json: [[String:Any]]){
+        companies = [String:String]()
+        for company in json{
+            var companyName = company["companyName"]! as! String
+            var companySymbol = company["symbol"]! as! String
+            companies[companyName] = companySymbol
+        }
     }
     
     private func requestQuote(for symbol: String){
@@ -50,8 +64,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             self.parseJson(data: data)
         }
         dataTask.resume()
-        
-        
     }
     
     private func parseJson(data: Data){
@@ -62,13 +74,14 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 let companyName = json["companyName"] as? String,
                 let symbol = json["symbol"] as? String,
                 let price = json["latestPrice"] as? Double,
+                let openPrice = json["open"] as? Double,
                 let priceChange = json["change"] as? Double
             else {
                     print("Invalid json")
                     return
                 }
             DispatchQueue.main.async {
-                self.displayStockInfo(companyName: companyName, symbol: symbol, price: price, priceChange: priceChange)
+                self.displayStockInfo(companyName: companyName, symbol: symbol, price: price, priceChange: priceChange, openPrice: openPrice)
             }
             
         } catch {
@@ -76,15 +89,25 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
             }
     }
     
-    private func displayStockInfo(companyName: String, symbol: String, price: Double, priceChange: Double){
+    private func displayStockInfo(companyName: String, symbol: String, price: Double, priceChange: Double, openPrice: Double){
         self.activityIndicator.stopAnimating()
         self.companyNameLabel.text = companyName
         self.symbolLabel.text = symbol
-        self.priceLabel.text = "\(price)"
+        switch price {
+        case price > openPrice:
+            self.priceLabel.text = "\(price)"
+        case price == openPrice:
+            self.priceLabel.text = "\(price)"
+        case price < openPrice:
+            self.priceLabel.text = "\(price)"
+        default:
+            print("Nothing")
+        }
         self.priceChangeLabel.text = "\(priceChange)"
     }
     
     private func requestQuoteUpdate() {
+
         self.activityIndicator.startAnimating()
         self.companyNameLabel.text = "-"
         self.symbolLabel.text = "-"
