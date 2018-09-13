@@ -14,6 +14,7 @@
 		B5832220214A7456006B4CF2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B583221E214A7456006B4CF2 /* LaunchScreen.storyboard */; };
 		B5BF8472214AB94A005631D8 /* CompanyPreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8471214AB94A005631D8 /* CompanyPreView.swift */; };
 		B5BF8474214ACC97005631D8 /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8473214ACC97005631D8 /* ApiService.swift */; };
+		B5BF8476214ADD4D005631D8 /* UIImageAsyncDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		B5832221214A7456006B4CF2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5BF8471214AB94A005631D8 /* CompanyPreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyPreView.swift; sourceTree = "<group>"; };
 		B5BF8473214ACC97005631D8 /* ApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
+		B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UIImageAsyncDownload.swift; path = "ФоминКА/UIImageAsyncDownload.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +44,7 @@
 		B5832209214A7454006B4CF2 = {
 			isa = PBXGroup;
 			children = (
+				B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */,
 				B5832214214A7454006B4CF2 /* ФоминКА */,
 				B5832213214A7454006B4CF2 /* Products */,
 			);
@@ -145,6 +148,7 @@
 				B5832218214A7454006B4CF2 /* ViewController.swift in Sources */,
 				B5BF8474214ACC97005631D8 /* ApiService.swift in Sources */,
 				B5832216214A7454006B4CF2 /* AppDelegate.swift in Sources */,
+				B5BF8476214ADD4D005631D8 /* UIImageAsyncDownload.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

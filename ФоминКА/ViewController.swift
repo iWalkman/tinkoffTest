@@ -18,6 +18,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     @IBOutlet var companyPickerView: UIPickerView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
+    @IBOutlet var companyLogoUIImageView: UIImageView!
     private var companies = [String:String]()
     
     override func viewDidLoad() {
@@ -93,17 +94,27 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.activityIndicator.stopAnimating()
         self.companyNameLabel.text = companyName
         self.symbolLabel.text = symbol
-        switch price {
-        case price > openPrice:
+
+        if price > openPrice{
             self.priceLabel.text = "\(price)"
-        case price == openPrice:
-            self.priceLabel.text = "\(price)"
-        case price < openPrice:
-            self.priceLabel.text = "\(price)"
-        default:
-            print("Nothing")
+            self.priceLabel.textColor = UIColor.green
         }
+        else if price < openPrice  {
+            self.priceLabel.text = "\(price)"
+            self.priceLabel.textColor = UIColor.red
+        }
+        else {
+            self.priceLabel.text = "\(price)"
+            self.priceLabel.textColor = UIColor.black
+        }
+        
         self.priceChangeLabel.text = "\(priceChange)"
+        
+        ApiService.shared.getUrlOfLogo(for: symbol){
+            url in
+            self.companyLogoUIImageView.imageFromServerURL(urlString: url)
+            print(url)
+        }
     }
     
     private func requestQuoteUpdate() {
