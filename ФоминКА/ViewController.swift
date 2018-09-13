@@ -31,12 +31,18 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         
         do {
-            ApiService.shared.getCompanyNames(){
-                responce in
-                self.UpdatePickerValues(json: responce)
-                self.companyPickerView.reloadAllComponents()
-                self.requestQuoteUpdate()
-                self.activityIndicator.stopAnimating()
+            ApiService.shared.getCompanyNames() {
+                responce, error  in
+                if error != nil{
+                    self.showAlert(message: "Network Error.")
+                }
+                else {
+                    self.UpdatePickerValues(json: responce)
+                    self.companyPickerView.reloadAllComponents()
+                    self.requestQuoteUpdate()
+                    self.activityIndicator.stopAnimating()
+                }
+
             } }
             catch {
                 showAlert(message: "Network Error.")
@@ -128,9 +134,15 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         do {
             ApiService.shared.getUrlOfLogo(for: symbol){
-                url in
-                self.companyLogoUIImageView.imageFromServerURL(urlString: url)
-                print(url)
+                url,error in
+                if error != nil{
+                    self.showAlert(message: "Can not download image.")
+                }
+                else {
+                    self.companyLogoUIImageView.imageFromServerURL(urlString: url)
+                    print(url)
+                }
+
             }
         } catch {
             showAlert(message: "Network Error.")

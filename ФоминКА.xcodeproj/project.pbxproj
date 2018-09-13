@@ -16,6 +16,7 @@
 		B5BF8474214ACC97005631D8 /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8473214ACC97005631D8 /* ApiService.swift */; };
 		B5BF8476214ADD4D005631D8 /* UIImageAsyncDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */; };
 		B5BF8478214AE810005631D8 /* GetPixelColours.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8477214AE810005631D8 /* GetPixelColours.swift */; };
+		B5BF847A214AF349005631D8 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BF8479214AF349005631D8 /* NetworkError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		B5BF8473214ACC97005631D8 /* ApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageAsyncDownload.swift; sourceTree = "<group>"; };
 		B5BF8477214AE810005631D8 /* GetPixelColours.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPixelColours.swift; sourceTree = "<group>"; };
+		B5BF8479214AF349005631D8 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 		B5832214214A7454006B4CF2 /* ФоминКА */ = {
 			isa = PBXGroup;
 			children = (
+				B5BF8479214AF349005631D8 /* NetworkError.swift */,
 				B5BF8475214ADD4D005631D8 /* UIImageAsyncDownload.swift */,
 				B5BF8473214ACC97005631D8 /* ApiService.swift */,
 				B5832215214A7454006B4CF2 /* AppDelegate.swift */,
@@ -148,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5BF8472214AB94A005631D8 /* CompanyPreView.swift in Sources */,
+				B5BF847A214AF349005631D8 /* NetworkError.swift in Sources */,
 				B5832218214A7454006B4CF2 /* ViewController.swift in Sources */,
 				B5BF8474214ACC97005631D8 /* ApiService.swift in Sources */,
 				B5BF8478214AE810005631D8 /* GetPixelColours.swift in Sources */,
