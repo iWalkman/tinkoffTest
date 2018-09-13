@@ -97,6 +97,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 }
             DispatchQueue.main.async {
                 self.displayStockInfo(companyName: companyName, symbol: symbol, price: price, priceChange: priceChange, openPrice: openPrice)
+                
             }
             
         } catch {
@@ -134,6 +135,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         } catch {
             showAlert(message: "Network Error.")
         }
+//        self.view.backgroundColor = self.companyLogoUIImageView.image?.getPixelColor().withAlphaComponent(4)//for best times
 
     }
     
@@ -164,9 +166,12 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        self.companyLogoUIImageView.layer.cornerRadius = 45.0
+        self.companyLogoUIImageView.layer.masksToBounds = true
+        self.companyLogoUIImageView.layer.borderWidth = 2.0
+        self.companyLogoUIImageView.layer.borderColor = UIColor.black.cgColor
         self.requestQuoteUpdate()
     }
-
 
 }
 
