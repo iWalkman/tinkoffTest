@@ -1,0 +1,3 @@
+git: https://github.com/iWalkman/tinkoffTest.git
+telegram: @Lord_of_snow
+Пожалуйста сообщите о своём решинии в любом случае.

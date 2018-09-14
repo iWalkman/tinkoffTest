@@ -55,6 +55,7 @@ class ApiService: NSObject {
                 (response as? HTTPURLResponse)?.statusCode == 200,
                 let data = data
                 else {
+                    completionHandler("", error)
                     print("NetworkError!")
                     return
             }
@@ -66,7 +67,7 @@ class ApiService: NSObject {
                         print("Invalid json")
                         return
                 }
-                completionHandler(json["url"]!)
+                completionHandler(json["url"]!, nil)
                 
             } catch {
                 print("Json Parsing Error.")
@@ -75,9 +76,10 @@ class ApiService: NSObject {
         dataTask.resume()
     }
     
-    func getPricesOfStock(for symbol: String,completionHandler: @escaping (String) -> (Void)){
-        let imageUrl = URL(string: "https://api.iextrading.com/1.0/stock/\(symbol)/book")
-        let dataTask = URLSession.shared.dataTask(with: imageUrl!) {data, response, error in
+    func getPricesOfStock(for symbol: String,completionHandler: @escaping ([String:Any], Error?) -> (Void)){
+        let budsUrl = URL(string: "https://api.iextrading.com/1.0/stock/\(symbol)/book")
+        print(budsUrl)
+        let dataTask = URLSession.shared.dataTask(with: budsUrl!) {data, response, error in
             guard
                 error == nil,
                 (response as? HTTPURLResponse)?.statusCode == 200,
@@ -89,17 +91,42 @@ class ApiService: NSObject {
             do {
                 let jsonObject = try JSONSerialization.jsonObject(with: data)
                 guard
-                    let json = jsonObject as? [String: String]
+                let json = jsonObject as? [[String: [String: Any]]]
+                    
                     else {
                         print("Invalid json")
                         return
                 }
-                completionHandler(json["url"]!)
+                for obj in json{
+                    print(obj)
+                }
+                print(json)
+                completionHandler(json[1]["bids"]!, nil)
                 
             } catch {
                 print("Json Parsing Error.")
             }
         }
+        dataTask.resume()
+    }
+    
+    func requestQuote(for symbol: String, completionHandler: @escaping (Data, Error?) -> (Void)){
+        let stockUrl = URL(string: "https://api.iextrading.com/1.0/stock/\(symbol)/quote")
+        
+        let dataTask = URLSession.shared.dataTask(with: stockUrl!) {data, response, error in
+            guard
+                error == nil,
+                (response as? HTTPURLResponse)?.statusCode == 200,
+                let data = data
+                else {
+                    completionHandler(Data(), error)
+                    print("NetworkError!")
+                    return
+            }
+            completionHandler(data, nil)
+
+        }
+        dataTask.resume()
     }
     
 }

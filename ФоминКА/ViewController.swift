@@ -29,8 +29,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.activityIndicator.hidesWhenStopped = true
         self.activityIndicator.startAnimating()
         
-        
-        do {
             ApiService.shared.getCompanyNames() {
                 responce, error  in
                 if error != nil{
@@ -43,10 +41,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                     self.activityIndicator.stopAnimating()
                 }
 
-            } }
-            catch {
-                showAlert(message: "Network Error.")
-                }
+            }
     }
 
     override func didReceiveMemoryWarning() {
@@ -62,29 +57,14 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         }
     }
     
+    
+
     private func showAlert(message: String){
         let alert = UIAlertController(title: "Error.", message: message, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-    
-    private func requestQuote(for symbol: String){
-        let stockUrl = URL(string: "https://api.iextrading.com/1.0/stock/\(symbol)/quote")
-        
-        let dataTask = URLSession.shared.dataTask(with: stockUrl!) {data, response, error in
-            guard
-                error == nil,
-                (response as? HTTPURLResponse)?.statusCode == 200,
-            let data = data
-                else {
-                    self.showAlert(message: "Network Error.")
-                    print("NetworkError!")
-                    return
-            }
-            self.parseJson(data: data)
-        }
-        dataTask.resume()
-    }
+
     
     private func parseJson(data: Data){
         do {
@@ -132,7 +112,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         self.priceChangeLabel.text = "\(priceChange)"
         
-        do {
             ApiService.shared.getUrlOfLogo(for: symbol){
                 url,error in
                 if error != nil{
@@ -144,9 +123,7 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 }
 
             }
-        } catch {
-            showAlert(message: "Network Error.")
-        }
+
 //        self.view.backgroundColor = self.companyLogoUIImageView.image?.getPixelColor().withAlphaComponent(4)//for best times
 
     }
@@ -161,7 +138,16 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let selectedRow = self.companyPickerView.selectedRow(inComponent: 0)
         let selectedSymbol = Array(self.companies.values)[selectedRow]
-        self.requestQuote(for: selectedSymbol)
+        
+        ApiService.shared.requestQuote(for: selectedSymbol){ data, error in
+            if error != nil {
+                self.showAlert(message: "Network Problems")
+            }
+            else {
+                self.parseJson(data: data)
+            }
+        }
+
         
     }
     
