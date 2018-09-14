@@ -10,18 +10,47 @@ import UIKit
 
 class Company: NSObject {
     
-    var companyName: String
-    var symbol: String
-    var price : String
-    var priceChange: String
-    var openPrice: String
+    var companyName: String? = nil
+    var symbol: String? = nil
+    var price : Double? = nil
+    var priceChange: Double? = nil
+    var openPrice: Double? = nil
     
-    init(companyName: String, symbol : String, price: String, priceChange: String, openPrice: String) {
-        self.companyName = companyName
-        self.symbol = symbol
-        self.price = price
-        self.priceChange = priceChange
-        self.openPrice = openPrice
+    
+    
+    init(data: Data) {
+        super.init()
+        parseJson(data: data)
     }
+    
+    
+    
+    private func parseJson(data: Data){
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: data)
+            guard
+                let json = jsonObject as? [String: Any],
+                let companyName = json["companyName"] as? String,
+                let symbol = json["symbol"] as? String,
+                let price = json["latestPrice"] as? Double,
+                let openPrice = json["open"] as? Double,
+                let priceChange = json["change"] as? Double
+                else {
+                    print("Invalid json")
+                    return
+            }
+            self.companyName = companyName
+            self.symbol = symbol
+            self.price = price
+            self.priceChange = priceChange
+            self.openPrice = openPrice
+            
+        } catch {
+            print("Json Parsing Error.")
+        }
+    }
+    
+    
+    
 
 }

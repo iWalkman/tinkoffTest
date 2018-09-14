@@ -110,7 +110,7 @@ class ApiService: NSObject {
         dataTask.resume()
     }
     
-    func requestQuote(for symbol: String, completionHandler: @escaping (Data, Error?) -> (Void)){
+    func requestQuote(for symbol: String, completionHandler: @escaping (Company, Error?) -> (Void)){
         let stockUrl = URL(string: "https://api.iextrading.com/1.0/stock/\(symbol)/quote")
         
         let dataTask = URLSession.shared.dataTask(with: stockUrl!) {data, response, error in
@@ -119,11 +119,12 @@ class ApiService: NSObject {
                 (response as? HTTPURLResponse)?.statusCode == 200,
                 let data = data
                 else {
-                    completionHandler(Data(), error)
+                    completionHandler(Company(data: Data()), error)
                     print("NetworkError!")
                     return
             }
-            completionHandler(data, nil)
+            let company = Company(data: data)
+            completionHandler(company, nil)
 
         }
         dataTask.resume()

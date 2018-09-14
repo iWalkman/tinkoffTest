@@ -29,19 +29,19 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         self.activityIndicator.hidesWhenStopped = true
         self.activityIndicator.startAnimating()
         
-            ApiService.shared.getCompanyNames() {
-                responce, error  in
-                if error != nil{
-                    self.showAlert(message: "Network Error.")
-                }
-                else {
-                    self.UpdatePickerValues(json: responce)
-                    self.companyPickerView.reloadAllComponents()
-                    self.requestQuoteUpdate()
-                    self.activityIndicator.stopAnimating()
-                }
-
+        ApiService.shared.getCompanyNames() {
+            responce, error  in
+            if error != nil{
+                self.showAlert(message: "Network Error.")
             }
+            else {
+                self.UpdatePickerValues(json: responce)
+                self.companyPickerView.reloadAllComponents()
+                self.requestQuoteUpdate()
+                self.activityIndicator.stopAnimating()
+            }
+
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -64,55 +64,28 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-
     
-    private func parseJson(data: Data){
-        do {
-            let jsonObject = try JSONSerialization.jsonObject(with: data)
-            guard
-                let json = jsonObject as? [String: Any],
-                let companyName = json["companyName"] as? String,
-                let symbol = json["symbol"] as? String,
-                let price = json["latestPrice"] as? Double,
-                let openPrice = json["open"] as? Double,
-                let priceChange = json["change"] as? Double
-            else {
-                showAlert(message: "Network Error.")
-                print("Invalid json")
-                return
-                }
-            DispatchQueue.main.async {
-                self.displayStockInfo(companyName: companyName, symbol: symbol, price: price, priceChange: priceChange, openPrice: openPrice)
-                
-            }
-            
-        } catch {
-                showAlert(message: "Network Error.")
-                print("Json Parsing Error.")
-            }
-    }
-    
-    private func displayStockInfo(companyName: String, symbol: String, price: Double, priceChange: Double, openPrice: Double){
-        self.activityIndicator.stopAnimating()
-        self.companyNameLabel.text = companyName
-        self.symbolLabel.text = symbol
+    private func displayStockInfo(company: Company){
+        
+        self.companyNameLabel.text = company.companyName
+        self.symbolLabel.text = company.symbol
 
-        if price > openPrice{
-            self.priceLabel.text = "\(price)"
+        if company.price! > company.openPrice!{
+            self.priceLabel.text = "\(company.price!)"
             self.priceLabel.textColor = UIColor.green
         }
-        else if price < openPrice  {
-            self.priceLabel.text = "\(price)"
+        else if company.price! < company.openPrice!  {
+            self.priceLabel.text = "\(company.price!)"
             self.priceLabel.textColor = UIColor.red
         }
         else {
-            self.priceLabel.text = "\(price)"
+            self.priceLabel.text = "\(company.price!)"
             self.priceLabel.textColor = UIColor.black
         }
         
-        self.priceChangeLabel.text = "\(priceChange)"
+        self.priceChangeLabel.text = "\(company.priceChange!)"
         
-            ApiService.shared.getUrlOfLogo(for: symbol){
+        ApiService.shared.getUrlOfLogo(for: company.symbol!){
                 url,error in
                 if error != nil{
                     self.showAlert(message: "Can not download image.")
@@ -123,7 +96,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 }
 
             }
-
+        self.companyLogoUIImageView.layer.cornerRadius = 45.0
+        self.companyLogoUIImageView.layer.masksToBounds = true
+        self.companyLogoUIImageView.layer.borderWidth = 2.0
+        self.companyLogoUIImageView.layer.borderColor = UIColor.black.cgColor
 //        self.view.backgroundColor = self.companyLogoUIImageView.image?.getPixelColor().withAlphaComponent(4)//for best times
 
     }
@@ -144,7 +120,10 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 self.showAlert(message: "Network Problems")
             }
             else {
-                self.parseJson(data: data)
+                DispatchQueue.main.async {
+                    self.displayStockInfo(company: data)
+                    self.activityIndicator.stopAnimating()
+                }
             }
         }
 
@@ -164,10 +143,6 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.companyLogoUIImageView.layer.cornerRadius = 45.0
-        self.companyLogoUIImageView.layer.masksToBounds = true
-        self.companyLogoUIImageView.layer.borderWidth = 2.0
-        self.companyLogoUIImageView.layer.borderColor = UIColor.black.cgColor
         self.requestQuoteUpdate()
     }
 
